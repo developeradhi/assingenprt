@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Assignment Cover Page Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -69,6 +70,8 @@
         
         .design-selector {
             margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ddd;
         }
         
         .design-selector label {
@@ -104,6 +107,42 @@
             border-color: #4CAF50;
         }
         
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .print-btn, .reset-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .print-btn {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .print-btn:hover {
+            background: #45a049;
+        }
+        
+        .reset-btn {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+        
+        .reset-btn:hover {
+            background: #e0e0e0;
+        }
+        
         .preview-section {
             margin-top: 30px;
         }
@@ -116,201 +155,264 @@
             font-size: 18px;
         }
         
-        /* Design 1: Classical Elegant */
-        .cover-page.design-1 {
-            background: #f5f0e8;
-            padding: 60px 40px;
-            text-align: center;
-            position: relative;
-            height: 900px;
+        /* A4 SIZE COVER PAGE */
+        .cover-page {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border: 3px solid #333;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             page-break-after: always;
+            position: relative;
+        }
+        
+        /* Design 1: Classical Elegant with Greek Border */
+        .cover-page.design-1 {
+            background: #f5f0e8;
+            padding: 40px;
+            text-align: center;
+            color: #1a1a1a;
             font-family: 'Georgia', serif;
         }
         
-        .cover-page.design-1 .border-decoration {
+        .design-1 .outer-border {
             position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            bottom: 20px;
-            border: 2px solid #999;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: 3px solid #8b7355;
             pointer-events: none;
         }
         
-        .cover-page.design-1 .ornament {
-            font-size: 40px;
-            color: #333;
-            margin: 15px 0;
+        .design-1 .inner-border {
+            position: absolute;
+            top: 35px;
+            left: 35px;
+            right: 35px;
+            bottom: 35px;
+            border: 1px solid #bbb;
+            pointer-events: none;
         }
         
-        .cover-page.design-1 .content {
+        .design-1 .content {
             position: relative;
             z-index: 1;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding: 30px 0;
         }
         
-        .cover-page.design-1 .title-text {
-            font-size: 26px;
-            font-weight: bold;
-            margin: 20px 0;
-            letter-spacing: 2px;
+        .design-1 .ornament-top {
+            font-size: 50px;
+            margin-bottom: 20px;
+            opacity: 0.8;
         }
         
-        .cover-page.design-1 .info-text {
+        .design-1 .date-line {
+            font-style: italic;
             font-size: 16px;
-            margin: 12px 0;
-            line-height: 1.8;
+            color: #666;
+            margin-bottom: 30px;
         }
         
-        .cover-page.design-1 .footer {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            justify-content: space-between;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid #999;
-        }
-        
-        /* Design 2: Modern Minimal */
-        .cover-page.design-2 {
-            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
-            padding: 60px 40px;
-            text-align: center;
-            height: 900px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border-left: 8px solid #2196F3;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-            page-break-after: always;
-            font-family: 'Arial', sans-serif;
-        }
-        
-        .cover-page.design-2 .accent-line {
-            height: 3px;
-            background: #2196F3;
-            width: 100px;
-            margin: 20px auto;
-        }
-        
-        .cover-page.design-2 .content {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        
-        .cover-page.design-2 .title-text {
-            font-size: 32px;
-            font-weight: 700;
-            color: #2196F3;
-            margin: 20px 0;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-        }
-        
-        .cover-page.design-2 .info-text {
-            font-size: 15px;
-            margin: 10px 0;
-            color: #555;
+        .design-1 .info-block {
+            margin: 15px 0;
+            font-size: 18px;
             line-height: 1.6;
         }
         
-        .cover-page.design-2 .footer {
-            display: flex;
-            justify-content: space-between;
-            padding-top: 20px;
-            border-top: 2px solid #2196F3;
+        .design-1 .label {
+            font-weight: bold;
+            display: inline-block;
+            min-width: 100px;
         }
         
-        /* Design 3: Professional Corporate */
-        .cover-page.design-3 {
-            background: #1a1a1a;
-            color: #f5f5f5;
-            padding: 60px 40px;
+        .design-1 .value {
+            display: inline;
+        }
+        
+        .design-1 .ornament-bottom {
+            font-size: 40px;
+            margin: 25px 0;
+            opacity: 0.8;
+        }
+        
+        .design-1 .to-section {
+            margin: 30px 0;
+            font-size: 16px;
+        }
+        
+        .design-1 .professor-name {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .design-1 .footer {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            padding-top: 30px;
+            border-top: 1px solid #999;
+            font-size: 14px;
+            margin-top: 60px;
+            min-height: 80px;
+        }
+        
+        /* Design 2: Modern Professional */
+        .cover-page.design-2 {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+            padding: 50px;
             text-align: center;
-            height: 900px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            border: 2px solid #d4af37;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            page-break-after: always;
-            font-family: 'Georgia', serif;
+            color: #1a1a1a;
+            font-family: 'Arial', sans-serif;
+            border-left: 12px solid #2196F3;
+            border-top: 4px solid #2196F3;
+            border-right: 4px solid #e0e0e0;
+            border-bottom: 4px solid #e0e0e0;
         }
         
-        .cover-page.design-3 .gold-accent {
-            color: #d4af37;
-            font-size: 36px;
-            margin: 20px 0;
-        }
-        
-        .cover-page.design-3 .content {
+        .design-2 .content {
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding: 20px 0;
         }
         
-        .cover-page.design-3 .title-text {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #d4af37;
+        .design-2 .accent-line {
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #2196F3, transparent);
+            width: 120px;
+            margin: 25px auto;
+        }
+        
+        .design-2 .title {
+            font-size: 32px;
+            font-weight: 800;
+            color: #2196F3;
+            margin: 25px 0;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
         }
         
-        .cover-page.design-3 .info-text {
-            font-size: 15px;
-            margin: 12px 0;
+        .design-2 .info-block {
+            font-size: 16px;
+            margin: 16px 0;
             line-height: 1.8;
-            color: #f5f5f5;
+            padding: 8px 0;
         }
         
-        .cover-page.design-3 .footer {
+        .design-2 .label {
+            font-weight: 700;
+            color: #2196F3;
+            min-width: 130px;
+            display: inline-block;
+        }
+        
+        .design-2 .to-section {
+            margin: 35px 0;
+            font-size: 16px;
+        }
+        
+        .design-2 .professor-name {
+            font-weight: 700;
+            font-size: 17px;
+            margin-top: 8px;
+        }
+        
+        .design-2 .footer {
             display: flex;
             justify-content: space-between;
-            padding-top: 20px;
-            border-top: 2px solid #d4af37;
+            padding-top: 30px;
+            border-top: 3px solid #2196F3;
+            font-size: 13px;
+            margin-top: 50px;
         }
         
-        .print-btn {
-            background: #4CAF50;
-            color: white;
-            padding: 12px 30px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 20px;
-            width: 100%;
+        /* Design 3: Corporate Premium */
+        .cover-page.design-3 {
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 100%);
+            color: #f5f5f5;
+            padding: 50px;
+            text-align: center;
+            font-family: 'Georgia', serif;
+            border: 3px solid #d4af37;
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.1);
         }
         
-        .print-btn:hover {
-            background: #45a049;
+        .design-3 .content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0;
         }
         
-        @media print {
-            body {
-                background: white;
-                padding: 0;
-            }
-            .input-section, .preview-title, .print-btn, .design-selector {
-                display: none;
-            }
+        .design-3 .accent {
+            color: #d4af37;
+            font-size: 40px;
+            margin: 20px 0;
+            letter-spacing: 3px;
+        }
+        
+        .design-3 .title {
+            font-size: 34px;
+            font-weight: 800;
+            color: #d4af37;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin: 25px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .design-3 .info-block {
+            font-size: 16px;
+            margin: 16px 0;
+            line-height: 1.8;
+            padding: 8px 0;
+            color: #e8e8e8;
+        }
+        
+        .design-3 .label {
+            font-weight: 800;
+            color: #d4af37;
+            min-width: 130px;
+            display: inline-block;
+        }
+        
+        .design-3 .to-section {
+            margin: 35px 0;
+            font-size: 16px;
+        }
+        
+        .design-3 .professor-name {
+            font-weight: 700;
+            font-size: 17px;
+            color: #d4af37;
+            margin-top: 8px;
+        }
+        
+        .design-3 .footer {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 30px;
+            border-top: 3px solid #d4af37;
+            font-size: 13px;
+            margin-top: 50px;
+        }
+        
+        @media (max-width: 768px) {
             .cover-page {
-                box-shadow: none;
-                margin: 0;
+                width: 100%;
+                height: auto;
+                min-height: 500px;
             }
         }
     </style>
@@ -319,157 +421,161 @@
     <div class="container">
         <div class="header">
             <h1>📄 Assignment Cover Page Generator</h1>
-            <p>Customize and create your cover page</p>
+            <p>Create professional assignment cover pages - PDF only!</p>
         </div>
         
         <div class="input-section">
             <div class="form-group">
                 <label>Student Name:</label>
-                <input type="text" id="studentName" value="S ABHISHEK" placeholder="Enter your name">
+                <input type="text" id="studentName" value="Enter your name" placeholder="Enter your name">
             </div>
             
             <div class="form-group">
                 <label>Class:</label>
-                <input type="text" id="className" value="1st year 'I' Section" placeholder="e.g., 1st year 'I' Section">
+                <input type="text" id="className" value="e.g., 1st year 'I' Section" placeholder="e.g., 1st year 'I' Section">
             </div>
             
             <div class="form-group">
                 <label>Branch:</label>
-                <input type="text" id="branch" value="ECE" placeholder="e.g., ECE">
+                <input type="text" id="branch" value="e.g., ECE" placeholder="e.g., ECE">
             </div>
             
             <div class="form-group">
                 <label>Subject:</label>
-                <input type="text" id="subject" value="Indian constitution & Engineering Ethics" placeholder="Enter subject">
+                <input type="text" id="subject" value="Enter subject" placeholder="Enter subject">
             </div>
             
             <div class="form-group">
                 <label>Subject Code:</label>
-                <input type="text" id="subjectCode" value="1BICO107" placeholder="e.g., 1BICO107">
+                <input type="text" id="subjectCode" value="e.g., 1BICO107" placeholder="e.g., 1BICO107">
             </div>
             
             <div class="form-group">
                 <label>College:</label>
-                <input type="text" id="college" value="Jain institute of technology Davangere" placeholder="Enter college name">
+                <input type="text" id="college" value="Enter college name" placeholder="Enter college name">
             </div>
             
             <div class="form-group">
                 <label>Submitted To:</label>
-                <input type="text" id="submittedTo" value="Chakravarthi B Rathod" placeholder="Enter professor name">
+                <input type="text" id="submittedTo" value="Enter professor name" placeholder="Enter professor name">
             </div>
             
             <div class="form-group">
                 <label>Date:</label>
-                <input type="text" id="date" value="8/12/2025" placeholder="e.g., 8/12/2025">
+                <input type="text" id="date" value="e.g., 8/12/2025" placeholder="e.g., 8/12/2025">
             </div>
             
             <div class="design-selector">
                 <label>Select Design:</label>
                 <div class="design-buttons">
-                    <button class="design-btn active" onclick="switchDesign('design-1')">Design 1: Classical</button>
-                    <button class="design-btn" onclick="switchDesign('design-2')">Design 2: Modern</button>
-                    <button class="design-btn" onclick="switchDesign('design-3')">Design 3: Corporate</button>
+                    <button class="design-btn active" onclick="switchDesign(1)">📋 Classical</button>
+                    <button class="design-btn" onclick="switchDesign(2)">🎨 Modern</button>
+                    <button class="design-btn" onclick="switchDesign(3)">💼 Corporate</button>
                 </div>
             </div>
             
-            <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+            <div class="button-group">
+                <button class="print-btn" onclick="downloadPDF()">⬇️ Download PDF</button>
+                <button class="reset-btn" onclick="resetForm()">↻ Reset</button>
+            </div>
         </div>
         
         <div class="preview-section">
-            <div class="preview-title">Preview:</div>
+            <div class="preview-title">📋 Live Preview:</div>
             
             <!-- Design 1: Classical -->
-            <div id="design-1" class="cover-page design-1">
-                <div class="border-decoration"></div>
+            <div id="cover-1" class="cover-page design-1">
+                <div class="outer-border"></div>
+                <div class="inner-border"></div>
                 <div class="content">
-                    <div class="ornament">✦</div>
-                    <div class="info-text" style="font-style: italic; color: #666;">Date: <span id="d1-date">8/12/2025</span></div>
-                    <div class="title-text">Name: <span id="d1-name">S ABHISHEK</span></div>
-                    <div class="info-text">Class: <span id="d1-class">1st year 'I' Section</span></div>
-                    <div class="info-text">Branch: <span id="d1-branch">ECE</span></div>
-                    <div class="info-text">Subject: <span id="d1-subject">Indian constitution & Engineering Ethics</span></div>
-                    <div class="info-text">Subject Code: <span id="d1-code">1BICO107</span></div>
-                    <div class="info-text">College: <span id="d1-college">Jain institute of technology Davangere</span></div>
-                    <div class="ornament">✦</div>
-                    <div style="margin-top: 40px;">
-                        <div class="info-text">To,</div>
-                        <div class="info-text" style="font-weight: bold;"><span id="d1-prof">Chakravarthi B Rathod</span></div>
+                    <div class="ornament-top">🌸</div>
+                    <div class="date-line">Date:<span id="c1-date">e.g., 8/12/2025</span></div>
+                    <div class="info-block"><span class="label">Name:</span><span class="value" id="c1-name">Enter your name</span></div>
+                    <div class="info-block"><span class="label">class:</span><span class="value" id="c1-class">e.g., 1st year 'I' Section</span></div>
+                    <div class="info-block"><span class="label">Branch:</span><span class="value" id="c1-branch">e.g., 1BICO107</span></div>
+                    <div class="info-block"><span class="label">Subject:</span><span class="value" id="c1-subject">Enter Subject Name</span></div>
+                    <div class="info-block"><span class="label">Subject Code:</span><span class="value" id="c1-code">Enter Subject Code</span></div>
+                    <div class="info-block"><span class="label">College:</span><span class="value" id="c1-college">Enter College Name</span></div>
+                    <div class="ornament-bottom">🌸</div>
+                    <div class="to-section">
+                        <div>To,</div>
+                        <div class="professor-name" id="c1-prof">Enter Professor Name</div>
                     </div>
                 </div>
                 <div class="footer">
                     <div>Student Sign</div>
-                    <div>professor Sign</div>
+                    <div>Professor Sign</div>
                 </div>
             </div>
             
             <!-- Design 2: Modern -->
-            <div id="design-2" class="cover-page design-2" style="display: none;">
+            <div id="cover-2" class="cover-page design-2" style="display: none;">
                 <div class="content">
                     <div class="accent-line"></div>
-                    <div class="title-text">ASSIGNMENT COVER</div>
+                    <div class="title">ASSIGNMENT COVER</div>
                     <div class="accent-line"></div>
                     <div style="margin-top: 30px;">
-                        <div class="info-text"><strong>Date:</strong> <span id="d2-date">8/12/2025</span></div>
-                        <div class="info-text"><strong>Student Name:</strong> <span id="d2-name">S ABHISHEK</span></div>
-                        <div class="info-text"><strong>Class:</strong> <span id="d2-class">1st year 'I' Section</span></div>
-                        <div class="info-text"><strong>Branch:</strong> <span id="d2-branch">ECE</span></div>
-                        <div class="info-text"><strong>Subject:</strong> <span id="d2-subject">Indian constitution & Engineering Ethics</span></div>
-                        <div class="info-text"><strong>Subject Code:</strong> <span id="d2-code">1BICO107</span></div>
-                        <div class="info-text"><strong>College:</strong> <span id="d2-college">Jain institute of technology Davangere</span></div>
-                        <div class="info-text" style="margin-top: 30px;"><strong>Submitted To:</strong></div>
-                        <div class="info-text"><span id="d2-prof">Chakravarthi B Rathod</span></div>
+                        <div class="info-block"><span class="label">Date:</span> <span id="c2-date">e.g., 8/12/2025</span></div>
+                        <div class="info-block"><span class="label">Name:</span> <span id="c2-name">Enter your name</span></div>
+                        <div class="info-block"><span class="label">Class:</span> <span id="c2-class">e.g., 1st year 'I' Section</span></div>
+                        <div class="info-block"><span class="label">Branch:</span> <span id="c2-branch">e.g., 1BICO107</span></div>
+                        <div class="info-block"><span class="label">Subject:</span> <span id="c2-subject">Indian constitution & Engineering Ethics</span></div>
+                        <div class="info-block"><span class="label">Subject Code:</span> <span id="c2-code">1BICO107</span></div>
+                        <div class="info-block"><span class="label">College:</span> <span id="c2-college">Jain institute of technology Davangere</span></div>
+                        <div class="to-section" style="margin-top: 30px;">
+                            <div><strong>Submitted To:</strong></div>
+                            <div class="professor-name" id="c2-prof">Chakravarthi B Rathod</div>
+                        </div>
                     </div>
                 </div>
                 <div class="footer">
                     <div>Student Signature</div>
-                    <div>Professor Signature</div>
+                    <div>Faculty Signature</div>
                 </div>
             </div>
             
             <!-- Design 3: Corporate -->
-            <div id="design-3" class="cover-page design-3" style="display: none;">
+            <div id="cover-3" class="cover-page design-3" style="display: none;">
                 <div class="content">
-                    <div class="gold-accent">▬ ◆ ▬</div>
-                    <div class="title-text">ASSIGNMENT SUBMISSION</div>
-                    <div class="gold-accent">▬ ◆ ▬</div>
+                    <div class="accent">▬ ◆ ▬</div>
+                    <div class="title">ASSIGNMENT SUBMISSION</div>
+                    <div class="accent">▬ ◆ ▬</div>
                     <div style="margin-top: 40px;">
-                        <div class="info-text"><strong>Date:</strong> <span id="d3-date">8/12/2025</span></div>
-                        <div class="info-text"><strong>Student Name:</strong> <span id="d3-name">S ABHISHEK</span></div>
-                        <div class="info-text"><strong>Class:</strong> <span id="d3-class">1st year 'I' Section</span></div>
-                        <div class="info-text"><strong>Branch:</strong> <span id="d3-branch">ECE</span></div>
-                        <div class="info-text"><strong>Subject:</strong> <span id="d3-subject">Indian constitution & Engineering Ethics</span></div>
-                        <div class="info-text"><strong>Subject Code:</strong> <span id="d3-code">1BICO107</span></div>
-                        <div class="info-text"><strong>College:</strong> <span id="d3-college">Jain institute of technology Davangere</span></div>
-                        <div class="info-text" style="margin-top: 30px;"><strong>Submitted To:</strong></div>
-                        <div class="info-text"><span id="d3-prof">Chakravarthi B Rathod</span></div>
+                        <div class="info-block"><span class="label">Date:</span> <span id="c3-date">e.g., 8/12/2025</span></div>
+                        <div class="info-block"><span class="label">Name:</span> <span id="c3-name">Enter your name</span></div>
+                        <div class="info-block"><span class="label">Class:</span> <span id="c3-class">e.g., 1st year 'I' Section</span></div>
+                        <div class="info-block"><span class="label">Branch:</span> <span id="c3-branch">e.g., 1BICO107</span></div>
+                        <div class="info-block"><span class="label">Subject:</span> <span id="c3-subject">Enter Subject Name</span></div>
+                        <div class="info-block"><span class="label">Subject Code:</span> <span id="c3-code">eg,.1BICO107</span></div>
+                        <div class="info-block"><span class="label">College:</span> <span id="c3-college">Enter College Name</span></div>
+                        <div class="to-section" style="margin-top: 30px;">
+                            <div><strong>Submitted To:</strong></div>
+                            <div class="professor-name" id="c3-prof">Chakravarthi B Rathod</div>
+                        </div>
                     </div>
                 </div>
                 <div class="footer">
                     <div>Student Signature</div>
-                    <div>Professor Signature</div>
+                    <div>Faculty Signature</div>
                 </div>
             </div>
         </div>
     </div>
     
     <script>
-        function switchDesign(designId) {
-            // Hide all designs
-            document.getElementById('design-1').style.display = 'none';
-            document.getElementById('design-2').style.display = 'none';
-            document.getElementById('design-3').style.display = 'none';
+        let currentDesign = 1;
+        
+        function switchDesign(design) {
+            currentDesign = design;
+            document.getElementById('cover-1').style.display = 'none';
+            document.getElementById('cover-2').style.display = 'none';
+            document.getElementById('cover-3').style.display = 'none';
+            document.getElementById(`cover-${design}`).style.display = 'flex';
             
-            // Show selected design
-            document.getElementById(designId).style.display = 'block';
-            
-            // Update active button
-            document.querySelectorAll('.design-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            document.querySelectorAll('.design-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
         }
         
-        // Update all designs when input changes
         function updateAllDesigns() {
             const data = {
                 name: document.getElementById('studentName').value,
@@ -482,38 +588,42 @@
                 date: document.getElementById('date').value
             };
             
-            // Update Design 1
-            document.getElementById('d1-name').textContent = data.name;
-            document.getElementById('d1-class').textContent = data.class;
-            document.getElementById('d1-branch').textContent = data.branch;
-            document.getElementById('d1-subject').textContent = data.subject;
-            document.getElementById('d1-code').textContent = data.code;
-            document.getElementById('d1-college').textContent = data.college;
-            document.getElementById('d1-prof').textContent = data.prof;
-            document.getElementById('d1-date').textContent = data.date;
-            
-            // Update Design 2
-            document.getElementById('d2-name').textContent = data.name;
-            document.getElementById('d2-class').textContent = data.class;
-            document.getElementById('d2-branch').textContent = data.branch;
-            document.getElementById('d2-subject').textContent = data.subject;
-            document.getElementById('d2-code').textContent = data.code;
-            document.getElementById('d2-college').textContent = data.college;
-            document.getElementById('d2-prof').textContent = data.prof;
-            document.getElementById('d2-date').textContent = data.date;
-            
-            // Update Design 3
-            document.getElementById('d3-name').textContent = data.name;
-            document.getElementById('d3-class').textContent = data.class;
-            document.getElementById('d3-branch').textContent = data.branch;
-            document.getElementById('d3-subject').textContent = data.subject;
-            document.getElementById('d3-code').textContent = data.code;
-            document.getElementById('d3-college').textContent = data.college;
-            document.getElementById('d3-prof').textContent = data.prof;
-            document.getElementById('d3-date').textContent = data.date;
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`c${i}-name`).textContent = data.name;
+                document.getElementById(`c${i}-class`).textContent = data.class;
+                document.getElementById(`c${i}-branch`).textContent = data.branch;
+                document.getElementById(`c${i}-subject`).textContent = data.subject;
+                document.getElementById(`c${i}-code`).textContent = data.code;
+                document.getElementById(`c${i}-college`).textContent = data.college;
+                document.getElementById(`c${i}-prof`).textContent = data.prof;
+                document.getElementById(`c${i}-date`).textContent = data.date;
+            }
         }
         
-        // Attach listeners to all inputs
+        function downloadPDF() {
+            const element = document.getElementById(`cover-${currentDesign}`);
+            const opt = {
+                margin: 0,
+                filename: 'Assignment_Cover_Page.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+        
+        function resetForm() {
+            document.getElementById('studentName').value = 'Enter Your Name';
+            document.getElementById('className').value = "e.g., 1st year 'I' Section";
+            document.getElementById('branch').value = 'Branch';
+            document.getElementById('subject').value = 'Enter subject';
+            document.getElementById('subjectCode').value = 'USN Number';
+            document.getElementById('college').value = 'College Name';
+            document.getElementById('submittedTo').value = 'Professor Name';
+            document.getElementById('date').value = 'Date of submission';
+            updateAllDesigns();
+        }
+        
         document.querySelectorAll('input').forEach(input => {
             input.addEventListener('change', updateAllDesigns);
             input.addEventListener('keyup', updateAllDesigns);
